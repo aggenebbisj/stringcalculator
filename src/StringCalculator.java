@@ -1,63 +1,40 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringCalculator {
 
-	private static final String DEFAULT_DELIMITER = ",";
-	private static final String CUSTOM_DELIMITER_PATTERN = "//(\\W)\n";
-	
-	private String delimiter = DEFAULT_DELIMITER;
+	private String DEFAULT_DELIMITERS = ",|\n";
 
 	public int add(String input) {
-		if ("".equals(input))
-			return 0;
+		String numberString = input;
 
-		String strippedInput = stripCustomDelimiter(input);
-		List<Integer> values = explode(strippedInput);
-		validateValues(values);
-		return sum(values);
+		Matcher m = Pattern.compile("^//(.)\n(.)*").matcher(input);
+		if (m.find()) {
+			DEFAULT_DELIMITERS = m.group(1);
+			numberString = m.group(2);
+			System.out.println(DEFAULT_DELIMITERS);
+			System.out.println(numberString);
+		}
+		return sum(numberString);
 	}
 
-	private String stripCustomDelimiter(String input) {
-		Matcher delimiterMatcher = Pattern.compile(CUSTOM_DELIMITER_PATTERN).matcher(input);
-		while (delimiterMatcher.find()) {
-			delimiter = delimiterMatcher.group(0).substring(2, 3);
+	private int sum(String numbers) {
+		int sum = 0;
+		for (String numberString : splitNumberString(numbers)) {
+			sum += toInt(numberString);
 		}
-		return input.replaceAll(CUSTOM_DELIMITER_PATTERN, "");
+		return sum;
 	}
-	
-	private void validateValues(List<Integer> values) {
-		List<Integer> negatives = new ArrayList<>();
-		for (int value : values) {
-			if (value < 0)
-				negatives.add(value);
-		}
+
+	private String[] splitNumberString(String numbers) {
+		if (numbers.isEmpty())
+			return new String[0];
 		
-		if (!negatives.isEmpty()) 
-			throw new IllegalArgumentException("negatives not allowed: " + negatives.toString());
+		return numbers.split(DEFAULT_DELIMITERS);
 	}
 
-	private int sum(List<Integer> values) {
-		int result = 0;
-		for (int value : values) {
-			result += value;
-		}
-		return result;
+	private int toInt(String number) {
+		return Integer.parseInt(number);
 	}
-
-	private List<Integer> explode(String values) {
-		List<Integer> result = new ArrayList<>();
-		try (Scanner scanner = new Scanner(values).useDelimiter(delimiter + "|\n")) {
-			while (scanner.hasNext()) {
-				result.add(Integer.valueOf(scanner.next().trim()));
-			}
-			return result;
-		}
-	}
-
-	
 
 }
