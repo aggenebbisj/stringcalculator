@@ -1,0 +1,4 @@
+stringcalculator
+================
+
+The StringCalculator Kata
