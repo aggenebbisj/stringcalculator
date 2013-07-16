@@ -1,6 +1,9 @@
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 
@@ -36,5 +39,51 @@ public class StringCalculatorTest {
 	@Test
 	public void should_support_custom_delimiter() {
 		assertThat(calculator.add("//;\n1;2;3"), is(6));
+	}
+	
+	@Test
+	public void should_support_reserved_character_as_custom_delimiter() {
+		assertThat(calculator.add("//$\n1$2$3"), is(6));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void should_throw_exception_for_negative_number() {
+		calculator.add("-1");
+	}
+	
+	@Test
+	public void should_list_negative_number_in_exception() {
+		try {
+			calculator.add("-1");
+			fail();
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.getMessage().contains("-1"));
+		}
+	}
+	
+	@Test
+	public void should_list_all_negative_numbers_in_exception() {
+		try {
+			calculator.add("-1,2,-3,4");
+			fail();
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.getMessage().contains("-1"));
+			assertTrue(e.getMessage().contains("-3"));
+		}
+	}
+	
+	@Test
+	public void should_ignore_numbers_larger_than_1000() {
+		assertThat(calculator.add("2,1001"), is(2));
+	}
+	
+	@Test
+	public void should_support_delimiters_of_any_length() {
+		assertThat(calculator.add("//[***]\n1***2***3"), is(6));
+	}
+	
+	@Test
+	public void should_support_multiple_delimiters() {
+		assertThat(calculator.add("//[*][%]\n1*2%3"), is(6));
 	}
 }
