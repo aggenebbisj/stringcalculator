@@ -3,11 +3,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class StringCalculatorTest {
@@ -28,7 +23,7 @@ public class StringCalculatorTest {
 	public void should_return_sum_for_two_numbers() {
 		assertThat(calculator.add("1,2"), is(3));
 	}
-
+ 
 	@Test
 	public void should_return_sum_for_any_amount_of_numbers() {
 		assertThat(calculator.add("1,2,3,4"), is(10));
@@ -38,7 +33,7 @@ public class StringCalculatorTest {
 	public void should_handle_newline_as_delimiter() {
 		assertThat(calculator.add("1,2\n3"), is(6));
 	}
-
+ 
 	@Test
 	public void should_support_custom_delimiter() {
 		assertThat(calculator.add("//;\n1;2;3"), is(6));
